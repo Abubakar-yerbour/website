@@ -1,0 +1,20 @@
+<!-- templates/login.html -->
+{% extends "base.html" %}
+{% block title %}Login | Unknown Gods{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <h2>Welcome to <span class="ug-highlight">Unknown Gods</span></h2>
+    <form method="POST">
+        <div class="form-group">
+            <label>Nickname</label>
+            <input type="text" name="nickname" required>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" required>
+        </div>
+        <button type="submit" class="btn">Login</button>
+    </form>
+</div>
+{% endblock %}

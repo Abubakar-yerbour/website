@@ -1,0 +1,28 @@
+<!-- templates/settings.html -->
+{% extends "base.html" %}
+{% block title %}Settings | Unknown Gods{% endblock %}
+
+{% block content %}
+<div class="settings-page">
+    <h2>Account Settings</h2>
+
+    <section class="password-section">
+        <h3>Change Password</h3>
+        <form method="POST" action="{{ url_for('auth.change_password') }}">
+            <input type="password" name="old_password" placeholder="Current Password" required>
+            <input type="password" name="new_password" placeholder="New Password" required>
+            <button type="submit">Update Password</button>
+        </form>
+    </section>
+
+    {% if session.get('is_admin') %}
+    <section class="nickname-section">
+        <h3>Change Your Nickname</h3>
+        <form method="POST" action="{{ url_for('auth.change_nickname') }}">
+            <input type="text" name="new_nickname" placeholder="New Nickname" required>
+            <button type="submit">Update Nickname</button>
+        </form>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

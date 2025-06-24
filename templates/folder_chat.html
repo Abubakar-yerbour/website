@@ -1,0 +1,25 @@
+<!-- templates/folder_chat.html -->
+{% extends "base.html" %}
+{% block title %}{{ folder_name|capitalize }} | Unknown Gods{% endblock %}
+
+{% block content %}
+<div class="chat-wrapper">
+    <aside class="chat-sidebar">
+        <h3>Folder: {{ folder_name }}</h3>
+        <a href="{{ url_for('chat.general_chat') }}">← Back to General Chat</a>
+    </aside>
+
+    <section class="chat-room">
+        <div id="chat-box">
+            {% for msg in messages %}
+                <div class="msg-line"><strong>@{{ msg.sender.nickname }}:</strong> {{ msg.content }}</div>
+            {% endfor %}
+        </div>
+        <form id="folder-chat-form" data-room="{{ folder_name }}">
+            <input type="text" id="folder-chat-input" placeholder="Message in {{ folder_name }}" autocomplete="off" required>
+            <button type="submit">Send</button>
+        </form>
+    </section>
+</div>
+<script src="{{ url_for('static', filename='js/socket.js') }}"></script>
+{% endblock %}

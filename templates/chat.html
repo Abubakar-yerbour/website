@@ -1,0 +1,36 @@
+<!-- templates/chat.html -->
+{% extends "base.html" %}
+{% block title %}General Chat | Unknown Gods{% endblock %}
+
+{% block content %}
+<div class="chat-wrapper">
+    <aside class="chat-sidebar">
+        <h3>Online Users</h3>
+        <ul id="online-users">
+            {% for user in online_users %}
+                <li>@{{ user.nickname }}</li>
+            {% endfor %}
+        </ul>
+        <div class="voice-controls">
+            <h4>Voice Chat</h4>
+            <button id="join-voice">🎧 Join</button>
+            <button id="toggle-mic">🎙️ Mute</button>
+            <audio id="voice-audio" autoplay></audio>
+        </div>
+    </aside>
+
+    <section class="chat-room">
+        <div id="chat-box">
+            {% for msg in messages %}
+                <div class="msg-line"><strong>@{{ msg.sender.nickname }}:</strong> {{ msg.content }}</div>
+            {% endfor %}
+        </div>
+        <form id="chat-form">
+            <input type="text" id="chat-input" placeholder="Type a message... use @nickname to tag" autocomplete="off" required>
+            <button type="submit">Send</button>
+        </form>
+    </section>
+</div>
+<script src="{{ url_for('static', filename='js/socket.js') }}"></script>
+<script src="{{ url_for('static', filename='js/audio.js') }}"></script>
+{% endblock %}

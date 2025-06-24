@@ -1,0 +1,30 @@
+<!-- templates/tools.html -->
+{% extends "base.html" %}
+{% block title %}Tools | Unknown Gods{% endblock %}
+
+{% block content %}
+<div class="tools-page">
+    <h2>Upload a Tool</h2>
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('tools.upload_tool') }}">
+        <input type="text" name="tool_name" placeholder="Tool Name" required>
+        <textarea name="description" placeholder="Short Description (optional)"></textarea>
+        <input type="file" name="tool_file" accept=".zip,.html,.htm,.css,.js,.py" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    <hr>
+
+    <h3>Available Tools</h3>
+    <ul class="tool-list">
+        {% for tool in tools %}
+        <li>
+            <strong>{{ tool.name }}</strong> by @{{ tool.uploader.nickname }} <br>
+            <small>{{ tool.description or 'No description' }}</small><br>
+            <a href="{{ url_for('tools.run_tool', tool_name=tool.name) }}">▶ Run</a>
+            |
+            <a href="{{ url_for('static', filename='uploads/' + tool.name + '/' + tool.filename) }}" download>⬇ Download</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

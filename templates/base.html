@@ -1,0 +1,42 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Unknown Gods{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themes.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}">
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="UG">
+            <span>Unknown Gods</span>
+        </div>
+        {% if session.get('user_id') %}
+            <div class="nav-links">
+                <a href="{{ url_for('chat.general_chat') }}">Chat</a>
+                <a href="{{ url_for('tools.upload_tool') }}">Tools</a>
+                {% if session.get('is_admin') %}
+                    <a href="{{ url_for('admin.dashboard') }}">Admin</a>
+                {% endif %}
+                <a href="{{ url_for('auth.logout') }}">Logout</a>
+                <button id="theme-toggle">🌓</button>
+            </div>
+        {% endif %}
+    </nav>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
