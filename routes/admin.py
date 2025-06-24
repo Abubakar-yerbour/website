@@ -1,8 +1,10 @@
 # routes/admin.py
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
-from utils.db import User, db
+from utils.db import db
+from utils.models import User
 from utils.decorators import admin_required
+from werkzeug.security import generate_password_hash
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -20,7 +22,7 @@ def reset_password(user_id):
     user = User.query.get(user_id)
     new_pass = request.form.get('new_password')
     if user and new_pass:
-        user.set_password(new_pass)
+        user.password = generate_password_hash(new_pass)
         db.session.commit()
         flash(f"Password reset for {user.nickname}.", 'success')
     return redirect(url_for('admin.dashboard'))
