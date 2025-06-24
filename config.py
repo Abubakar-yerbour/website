@@ -1,9 +1,8 @@
-# config.py
 import os
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'dev_secret')
-    
-    # Use /tmp for writeable space on Render
-    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/app.db'
+    SECRET_KEY = os.environ.get("SECRET_KEY") or "super-secret-key"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
