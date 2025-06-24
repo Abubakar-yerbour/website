@@ -7,10 +7,6 @@ db = SQLAlchemy()
 def init_db(app=None):
     from utils.models import User, Folder, Message, Tool
 
-def get_online_users():
-    from .models import User
-    return User.query.filter_by(is_online=True).all()
-    
     if app is not None:
         db.init_app(app)
         with app.app_context():
@@ -25,3 +21,7 @@ def get_online_users():
                 )
                 db.session.add(admin)
                 db.session.commit()
+
+def get_online_users():
+    from utils.models import User
+    return User.query.filter_by(online=True).all()
