@@ -9,7 +9,7 @@ import eventlet
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object(Config)
 
-socketio = SocketIO(app, async_mode='eventlet')
+socketio = SocketIO(app, async_mode='threading')  # Safe & Render-compatible
 
 # Ensure instance folder exists
 try:
