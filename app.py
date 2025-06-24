@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_socketio import SocketIO
 from config import Config
-from models import db, User  # ✅ Correct import
+from models import db, User
 
 # Import blueprints
 from routes.chat import chat_bp
@@ -16,7 +16,7 @@ app.config.from_object(Config)
 
 # Initialize extensions
 db.init_app(app)
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode="threading")  # ✅ Fix here
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
