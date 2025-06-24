@@ -1,6 +1,6 @@
 # app.py
 from flask import Flask
-from flask_socketio import SocketIO
+from socketio_config import socketio
 from utils.db import init_db
 from config import Config
 import os
