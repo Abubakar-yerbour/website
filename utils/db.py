@@ -1,18 +1,20 @@
 # utils/db.py
+
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
 
+# Initialize SQLAlchemy instance
 db = SQLAlchemy()
 
 def init_db(app=None):
-    from utils.models import User, Folder, Message, Tool
+    from utils.models import User, Folder, Message, Tool  # Import after db is defined
 
     if app is not None:
         db.init_app(app)
         with app.app_context():
             db.create_all()
 
-            # Create default admin if not exists
+            # Create default admin user if it doesn't exist
             if not User.query.filter_by(nickname='admin').first():
                 admin = User(
                     nickname='admin',
