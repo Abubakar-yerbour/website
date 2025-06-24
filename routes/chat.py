@@ -1,9 +1,10 @@
 # routes/chat.py
-from flask import Blueprint, render_template, session, redirect, url_for
+from flask import Blueprint, render_template
 from flask_login import login_required, current_user
 from utils.db import get_online_users
+from socketio_config import socketio  # ✅ only import from socketio_config
+
 from flask_socketio import emit, join_room
-from app import socketio
 
 chat_bp = Blueprint('chat', __name__)
 
