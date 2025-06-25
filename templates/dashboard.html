@@ -1,50 +1,57 @@
-<!-- templates/dashboard.html -->
 {% extends "base.html" %}
 {% block title %}Admin Dashboard | Unknown Gods{% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-    <h2>Admin Dashboard</h2>
+<h2>Admin Dashboard</h2>
 
-    <section class="create-user">
-        <h3>Create New User</h3>
-        <form method="POST" action="{{ url_for('admin.create_user') }}">
-            <input type="text" name="nickname" placeholder="Nickname" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Create</button>
-        </form>
-    </section>
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class="flashes">
+      {% for category, message in messages %}
+        <li class="flash-{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
 
-    <section class="user-management">
-        <h3>Manage Users</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nickname</th>
-                    <th>Reset Password</th>
-                    <th>Change Nickname</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr>
-                    <td>{{ user.nickname }}</td>
-                    <td>
-                        <form method="POST" action="{{ url_for('admin.reset_password', user_id=user.id) }}">
-                            <input type="password" name="new_password" placeholder="New Password" required>
-                            <button type="submit">Reset</button>
-                        </form>
-                    </td>
-                    <td>
-                        <form method="POST" action="{{ url_for('admin.rename_user', user_id=user.id) }}">
-                            <input type="text" name="new_nickname" placeholder="New Nickname" required>
-                            <button type="submit">Rename</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </section>
-</div>
+<!-- Create New User -->
+<form method="POST" action="{{ url_for('admin.create_user') }}">
+    <h3>Create New User</h3>
+    <input type="text" name="nickname" placeholder="Nickname" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button type="submit">Create</button>
+</form>
+
+<hr>
+<h3>All Users</h3>
+<table>
+    <thead>
+        <tr><th>ID</th><th>Nickname</th><th>Admin?</th><th>Reset Password</th><th>Edit Nickname</th></tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.nickname }}</td>
+            <td>{{ 'Yes' if user.is_admin else 'No' }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('admin.reset_password', user_id=user.id) }}">
+                    <input type="password" name="new_password" placeholder="New password" required>
+                    <button type="submit">Reset</button>
+                </form>
+            </td>
+            <td>
+                <form method="POST" action="{{ url_for('admin.update_nickname', user_id=user.id) }}">
+                    <input type="text" name="nickname" placeholder="New nickname" required>
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+<a href="{{ url_for('admin.admin_settings') }}">Change my password / nickname</a>
 {% endblock %}
