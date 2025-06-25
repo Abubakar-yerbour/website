@@ -81,3 +81,21 @@ def admin_settings():
         return redirect(url_for("admin.admin_settings"))
 
     return render_template("admin_settings.html", current=current_user)
+@admin_bp.route('/admin/settings', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def admin_settings():
+    if request.method == 'POST':
+        new_nick = request.form.get('nickname')
+        new_pass = request.form.get('password')
+
+        if new_nick:
+            current_user.nickname = new_nick
+        if new_pass:
+            current_user.password = generate_password_hash(new_pass)
+
+        db.session.commit()
+        flash("Your settings have been updated.", "success")
+        return redirect(url_for('admin.admin_settings'))
+
+    return render_template('admin/settings.html', user=current_user)
