@@ -1,0 +1,84 @@
+<!-- templates/home.html -->
+{% extends "base.html" %}
+{% block title %}Home | Unknown Gods{% endblock %}
+
+{% block content %}
+<div class="home-wrapper">
+  <aside class="sidebar">
+    <section class="folders">
+      <h3>#Folders</h3>
+      <!-- Admin can create folders -->
+      {% if current_user.is_admin %}
+        <button onclick="showCreateFolderForm()">➕ New Folder</button>
+      {% endif %}
+    </section>
+
+    <section class="tools">
+      <h3>Tools</h3>
+      <button onclick="showUploadToolForm('web')">Upload Web Tool</button>
+      <button onclick="showUploadToolForm('other')">Upload Other Tool</button>
+      <ul id="tool-list">
+        <!-- Dynamically list tools here -->
+      </ul>
+    </section>
+
+    <section class="settings">
+      <h3>Settings</h3>
+      <ul>
+        <li><a href="{{ url_for('settings.change_password') }}">Change Password</a></li>
+        {% if current_user.is_admin %}
+          <li><a href="{{ url_for('settings.change_nickname') }}">Change Nickname</a></li>
+          <li><a href="{{ url_for('admin.create_user') }}">Create Users</a></li>
+          <li><a href="{{ url_for('admin.reset_password_page') }}">Reset Users Password</a></li>
+        {% endif %}
+      </ul>
+    </section>
+  </aside>
+
+  <section class="main-chat">
+    <div class="chat-header">
+      <div class="active-users">
+        {% for user in online_users %}
+          <span>@{{ user.nickname }}</span>{% if not loop.last %}, {% endif %}
+        {% endfor %} is active
+      </div>
+      <div class="pinned">
+        <strong>Pinned:</strong> <span id="pinned-msg">{{ pinned_message }}</span>
+      </div>
+      <div class="voice-status">
+        {% if voice_call_active %}
+          <strong>Ongoing Voice Call Available</strong>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="chat-area" id="chat-box">
+      {% for msg in messages %}
+        <div class="msg">
+          <span class="sender">@{{ msg.sender.nickname }}:</span>
+          <span class="text">{{ msg.content }}</span>
+        </div>
+      {% endfor %}
+    </div>
+
+    <form id="chat-form">
+      <input type="text" id="chat-input" placeholder="Enter message... use @nickname to tag" autocomplete="off" required>
+      <input type="file" id="chat-image-upload" accept="image/*">
+      <button type="submit">Send</button>
+      <button type="button" onclick="startVoiceCall()">📞 Start Call</button>
+    </form>
+  </section>
+
+  <aside class="voice-controls">
+    {% if voice_call_active %}
+      <button id="join-voice">🎧 Join</button>
+      <button id="toggle-mic">🎙️ Mute</button>
+      <audio id="voice-audio" autoplay></audio>
+    {% endif %}
+  </aside>
+</div>
+
+<script src="{{ url_for('static', filename='js/socket.js') }}"></script>
+<script src="{{ url_for('static', filename='js/audio.js') }}"></script>
+<script src="{{ url_for('static', filename='js/background.js') }}"></script>
+{% endblock %}
