@@ -3,6 +3,7 @@
 {% block title %}General Chat | Unknown Gods{% endblock %}
 
 {% block content %}
+<body data-nick="{{ user.nickname }}">
 <div class="chat-wrapper">
     <aside class="chat-sidebar">
         <h3>Online Users</h3>
@@ -11,6 +12,8 @@
                 <li>@{{ user.nickname }}</li>
             {% endfor %}
         </ul>
+
+        <!-- Voice Chat Controls (initially hidden) -->
         <div class="voice-controls" style="display: none;">
             <h4>Voice Chat</h4>
             <button id="join-voice">🎧 Join</button>
@@ -22,29 +25,19 @@
     <section class="chat-room">
         <div id="chat-box">
             {% for msg in messages %}
-                <div class="msg-line">
-                    <strong>@{{ msg.sender.nickname }}:</strong> {{ msg.content }}
-                </div>
+                <div class="msg-line"><strong>@{{ msg.sender.nickname }}:</strong> {{ msg.content }}</div>
             {% endfor %}
         </div>
-        <form id="chat-form">
-            <input type="text" id="chat-input" placeholder="Type a message... use @nickname to tag" autocomplete="off" required>
+        <form id="chat-form" autocomplete="off">
+            <input type="text" id="chat-input" placeholder="Type a message... use @nickname to tag" required>
             <button type="submit">Send</button>
         </form>
     </section>
 </div>
 
-<!-- Socket.IO CDN -->
+<!-- Socket.IO -->
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-
-<!-- Make current user's nickname accessible in JS -->
-<script>
-    const currentUserNickname = "{{ user.nickname }}";
-</script>
-
-<!-- Socket logic -->
 <script src="{{ url_for('static', filename='js/socket.js') }}"></script>
-
-<!-- Voice/audio logic -->
 <script src="{{ url_for('static', filename='js/audio.js') }}"></script>
+
 {% endblock %}
