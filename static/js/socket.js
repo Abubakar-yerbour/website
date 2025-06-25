@@ -3,9 +3,10 @@
 const socket = io(); // Connect to the Socket.IO server
 
 // Join the default room ("general")
-socket.emit("join", {
+socket.emit("send_message", {
     room: "general",
-    user: currentUserNickname  // This should be defined in a <script> tag in your HTML
+    sender: currentUserNickname,
+    content: message
 });
 
 // Handle receiving a message
