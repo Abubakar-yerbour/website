@@ -3,28 +3,47 @@
 {% block title %}Tools | Unknown Gods{% endblock %}
 
 {% block content %}
-<div class="tools-page">
-    <h2>Upload a Tool</h2>
-    <form method="POST" enctype="multipart/form-data" action="{{ url_for('tools.upload_tool') }}">
-        <input type="text" name="tool_name" placeholder="Tool Name" required>
-        <textarea name="description" placeholder="Short Description (optional)"></textarea>
-        <input type="file" name="tool_file" accept=".zip,.html,.htm,.css,.js,.py" required>
-        <button type="submit">Upload</button>
-    </form>
+<h2>Upload Tool</h2>
+<form method="POST" enctype="multipart/form-data">
+    <label for="file">Select File:</label>
+    <input type="file" name="file" required>
 
-    <hr>
+    <label for="description">Description (optional):</label>
+    <input type="text" name="description" placeholder="What does this tool do?">
 
-    <h3>Available Tools</h3>
-    <ul class="tool-list">
-        {% for tool in tools %}
+    <button type="submit">Upload</button>
+</form>
+
+<hr>
+
+<h2>Web-based Tools</h2>
+<ul>
+    {% for tool in tools if tool.is_web_tool %}
         <li>
-            <strong>{{ tool.name }}</strong> by @{{ tool.uploader.nickname }} <br>
-            <small>{{ tool.description or 'No description' }}</small><br>
-            <a href="{{ url_for('tools.run_tool', tool_name=tool.name) }}">▶ Run</a>
-            |
-            <a href="{{ url_for('static', filename='uploads/' + tool.name + '/' + tool.filename) }}" download>⬇ Download</a>
+            <strong>{{ tool.name }}</strong>
+            <small>by @{{ tool.uploader.nickname }}</small>
+            <a href="{{ url_for('tools.run_tool', tool_id=tool.id) }}" target="_blank">▶️ Run</a>
+            {% if tool.uploader_id == current.id %}
+                <span style="color: gray;">(You can edit this later)</span>
+            {% endif %}
         </li>
-        {% endfor %}
-    </ul>
-</div>
+    {% else %}
+        <p>No web tools uploaded yet.</p>
+    {% endfor %}
+</ul>
+
+<hr>
+
+<h2>Downloadable Tools</h2>
+<ul>
+    {% for tool in tools if not tool.is_web_tool %}
+        <li>
+            <strong>{{ tool.name }}</strong>
+            <small>by @{{ tool.uploader.nickname }} on {{ tool.created_at.strftime("%Y-%m-%d") }}</small>
+            <a href="{{ url_for('tools.download_file', tool_id=tool.id) }}">⬇️ Download</a>
+        </li>
+    {% else %}
+        <p>No downloadable tools uploaded yet.</p>
+    {% endfor %}
+</ul>
 {% endblock %}
