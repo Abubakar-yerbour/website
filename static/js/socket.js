@@ -1,12 +1,14 @@
 // static/js/socket.js
 
-const socket = io(); // Connect to Socket.IO
+const socket = io(); // Connect to the Socket.IO server
 
-socket.on("connect", () => {
-    console.log("🔌 Connected to chat server.");
+// Join the default room ("general")
+socket.emit("join", {
+    room: "general",
+    user: currentUserNickname  // This should be defined in a <script> tag in your HTML
 });
 
-// Receive a new message
+// Handle receiving a message
 socket.on("receive_message", (data) => {
     const chatBox = document.getElementById("chat-box");
     if (chatBox) {
@@ -18,7 +20,7 @@ socket.on("receive_message", (data) => {
     }
 });
 
-// Update online users
+// Update the online user list
 socket.on("update_users", (userList) => {
     const list = document.getElementById("online-users");
     if (list) {
@@ -27,6 +29,27 @@ socket.on("update_users", (userList) => {
             const li = document.createElement("li");
             li.textContent = `@${nick}`;
             list.appendChild(li);
+        });
+    }
+});
+
+// Handle form submission (send message)
+document.addEventListener("DOMContentLoaded", () => {
+    const chatForm = document.getElementById("chat-form");
+    const chatInput = document.getElementById("chat-input");
+
+    if (chatForm && chatInput) {
+        chatForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if (message !== "") {
+                socket.emit("send_message", {
+                    room: "general",
+                    sender: currentUserNickname,
+                    content: message
+                });
+                chatInput.value = "";
+            }
         });
     }
 });
