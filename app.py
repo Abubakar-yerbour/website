@@ -26,7 +26,7 @@ login_manager.login_view = 'login'
 app.register_blueprint(chat_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(tools_bp)
-app.register_blueprint(user_bp)  # ✅ Register user blueprint
+app.register_blueprint(user_bp)
 
 # User loader
 @login_manager.user_loader
@@ -44,7 +44,11 @@ def login():
             user.online = True
             db.session.commit()
             login_user(user)
-            return redirect(url_for("chat.general"))
+            # ✅ Redirect based on role
+            if user.is_admin:
+                return redirect(url_for("admin.dashboard"))
+            else:
+                return redirect(url_for("chat.general"))
         else:
             return render_template("login.html", error="Invalid credentials.")
     return render_template("login.html")
@@ -57,6 +61,12 @@ def logout():
     db.session.commit()
     logout_user()
     return redirect(url_for("login"))
+
+# Optional Home route (unified landing page)
+@app.route("/home")
+@login_required
+def home():
+    return render_template("home.html", current=current_user)
 
 # Run the app
 if __name__ == "__main__":
