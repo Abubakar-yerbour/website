@@ -1,3 +1,4 @@
+from werkzeug.security import check_password_hash
 from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
@@ -37,7 +38,7 @@ def login():
         nickname = request.form["nickname"]
         password = request.form["password"]
         user = User.query.filter_by(nickname=nickname).first()
-        if user and user.password == password:
+        if user and check_password_hash(user.password, password):
             login_user(user)
             return redirect(url_for("chat.general"))
         else:
