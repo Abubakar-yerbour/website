@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
 from utils.db import get_online_users
-from socketio_config import socketio  # ✅ only import from socketio_config
+from socketio_config import socketio
 
 from flask_socketio import emit, join_room
 
@@ -10,7 +10,7 @@ chat_bp = Blueprint('chat', __name__)
 
 @chat_bp.route('/chat')
 @login_required
-def chat():
+def general():  # ✅ Renamed from `chat` to `general` to match url_for("chat.general")
     return render_template('chat.html', user=current_user, online_users=get_online_users())
 
 @socketio.on('join')
