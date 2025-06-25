@@ -30,8 +30,13 @@ class Message(db.Model):
 
 class Tool(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    uploader_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     name = db.Column(db.String(100), nullable=False)
     filename = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
+    filetype = db.Column(db.String(20), nullable=False)
+    is_web_tool = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    uploader_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    uploader = db.relationship('User', backref='tools')
+    
