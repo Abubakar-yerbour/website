@@ -53,4 +53,15 @@ def logout():
 
 # Run the app
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
+        # Create default admin user only if not exists
+        if not User.query.filter_by(nickname="admin").first():
+            admin = User(nickname="admin", password="admin", is_admin=True)
+            db.session.add(admin)
+            db.session.commit()
+            print("✅ Tables created and default admin added.")
+        else:
+            print("✅ Tables already exist. Skipping creation.")
+
     socketio.run(app, host="0.0.0.0", port=10000, allow_unsafe_werkzeug=True)
