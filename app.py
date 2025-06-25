@@ -1,8 +1,8 @@
-from werkzeug.security import check_password_hash
 from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_socketio import SocketIO
+from werkzeug.security import check_password_hash, generate_password_hash  # ✅ hash utils
 from config import Config
 from models import db, User
 
@@ -17,7 +17,7 @@ app.config.from_object(Config)
 
 # Initialize extensions
 db.init_app(app)
-socketio = SocketIO(app, async_mode="threading")  # No eventlet on Python 3.13
+socketio = SocketIO(app, async_mode="threading")  # ✅ No eventlet on Python 3.13
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
@@ -38,7 +38,9 @@ def login():
         nickname = request.form["nickname"]
         password = request.form["password"]
         user = User.query.filter_by(nickname=nickname).first()
-        if user and check_password_hash(user.password, password):
+        if user and check_password_hash(user.password, password):  # ✅ Password hash check
+            user.online = True  # ✅ Mark user online
+            db.session.commit()
             login_user(user)
             return redirect(url_for("chat.general"))
         else:
@@ -49,6 +51,8 @@ def login():
 @app.route("/logout")
 @login_required
 def logout():
+    current_user.online = False  # ✅ Mark user offline
+    db.session.commit()
     logout_user()
     return redirect(url_for("login"))
 
@@ -56,9 +60,10 @@ def logout():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-        # Create default admin user only if not exists
+        # Create default admin user if not exists
         if not User.query.filter_by(nickname="admin").first():
-            admin = User(nickname="admin", password="admin", is_admin=True)
+            hashed_pw = generate_password_hash("admin")  # ✅ Store hashed password
+            admin = User(nickname="admin", password=hashed_pw, is_admin=True, online=False)
             db.session.add(admin)
             db.session.commit()
             print("✅ Tables created and default admin added.")
