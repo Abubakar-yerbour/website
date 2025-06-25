@@ -1,0 +1,19 @@
+<!-- templates/user/settings.html -->
+{% extends "base.html" %}
+{% block title %}User Settings | Unknown Gods{% endblock %}
+
+{% block content %}
+<h2>Update Your Password</h2>
+
+<form method="POST" action="{{ url_for('user.user_settings') }}">
+    <div>
+        <label for="password">New Password:</label>
+        <input type="password" name="password" id="password" required>
+    </div>
+    <button type="submit">Update Password</button>
+</form>
+
+{% if message %}
+<p style="color: green;">{{ message }}</p>
+{% endif %}
+{% endblock %}
