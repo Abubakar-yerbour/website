@@ -16,7 +16,7 @@ app.config.from_object(Config)
 
 # Initialize extensions
 db.init_app(app)
-socketio = SocketIO(app, async_mode="threading")  # ✅ Fix here
+socketio = SocketIO(app, async_mode="threading")  # No eventlet on Python 3.13
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
@@ -53,4 +53,4 @@ def logout():
 
 # Run the app
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=10000)
+    socketio.run(app, host="0.0.0.0", port=10000, allow_unsafe_werkzeug=True)
