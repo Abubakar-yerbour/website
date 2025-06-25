@@ -1,8 +1,6 @@
-# routes/admin.py
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
-from utils.db import db
-from utils.models import User
+from models import db, User  # Simplified: no need to import User from utils
 from utils.decorators import admin_required
 from werkzeug.security import generate_password_hash
 
