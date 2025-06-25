@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Admin Settings | Unknown Gods{% endblock %}
+
+{% block content %}
+<h2>⚙️ Admin Settings</h2>
+
+<form method="POST" action="{{ url_for('admin.admin_settings') }}">
+    <div>
+        <label>New Nickname</label><br>
+        <input type="text" name="nickname" placeholder="Enter new nickname">
+    </div>
+
+    <div>
+        <label>New Password</label><br>
+        <input type="password" name="password" placeholder="Enter new password">
+    </div>
+
+    <button type="submit">Update Settings</button>
+</form>
+
+<a href="{{ url_for('admin.dashboard') }}">⬅️ Back to Dashboard</a>
+{% endblock %}
