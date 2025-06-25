@@ -11,7 +11,7 @@
                 <li>@{{ user.nickname }}</li>
             {% endfor %}
         </ul>
-        <div class="voice-controls">
+        <div class="voice-controls" style="display: none;">
             <h4>Voice Chat</h4>
             <button id="join-voice">🎧 Join</button>
             <button id="toggle-mic">🎙️ Mute</button>
@@ -31,6 +31,53 @@
         </form>
     </section>
 </div>
-<script src="{{ url_for('static', filename='js/socket.js') }}"></script>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+    const socket = io();
+
+    // Join the chat room
+    socket.emit('join', {
+        room: 'general',
+        user: "{{ user.nickname }}"
+    });
+
+    const chatBox = document.getElementById('chat-box');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (chatInput.value.trim()) {
+            socket.emit('send_message', {
+                room: 'general',
+                user: "{{ user.nickname }}",
+                message: chatInput.value
+            });
+            chatInput.value = '';
+        }
+    });
+
+    socket.on('receive_message', function(data) {
+        const msg = document.createElement('div');
+        msg.classList.add('msg-line');
+        msg.innerHTML = `<strong>@${data.user}:</strong> ${data.message}`;
+        chatBox.appendChild(msg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+
+    // Voice chat UI logic
+    socket.on('voice_started', () => {
+        document.querySelector('.voice-controls').style.display = 'block';
+    });
+
+    document.getElementById('join-voice').addEventListener('click', () => {
+        socket.emit('join_voice', { user: "{{ user.nickname }}" });
+    });
+
+    document.getElementById('toggle-mic').addEventListener('click', () => {
+        socket.emit('mute_voice', { user: "{{ user.nickname }}" });
+    });
+</script>
 <script src="{{ url_for('static', filename='js/audio.js') }}"></script>
 {% endblock %}
